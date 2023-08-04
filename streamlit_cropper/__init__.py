@@ -17,9 +17,27 @@ else:
 
 
 def _resize_img(img: Image, max_height: int = 700, max_width: int = 700) -> Image:
-    # Resize the image to be a max of 700x700 by default, or whatever the user
-    # provides. If streamlit has an attribute to expose the default width of a widget,
-    # we should use that instead.
+
+    """
+        Resize the image to be a max of 700x700 by default, or whatever the user
+        provides. If streamlit has an attribute to expose the default width of a widget,
+        we should use that instead.
+         parameters: 
+            img: Image
+                The input image provided 
+
+            max_height: int
+                Default max height of 700
+
+            max_width: int
+                Default max width of 700
+             
+
+            
+        returns:
+            img: Image
+                Returns: Resized image 
+    """
     if img.height > max_height:
         ratio = max_height / img.height
         img = img.resize((int(img.width * ratio), int(img.height * ratio)))
@@ -29,12 +47,31 @@ def _resize_img(img: Image, max_height: int = 700, max_width: int = 700) -> Imag
     return img
 
 
-def _recommended_box(img: Image, aspect_ratio: tuple = None) -> dict:
+def _recommended_box(img: Image, aspect_ratio: tuple = None, tile_height: int = 256, tile_width: int = 256) -> dict:
+    """
+        Finds a recommended box for the image (could be replaced with image detection)
+         parameters: 
+            img: Image
+                The input image provided 
+
+            aspect_ratio: tuple
+                Default ratio of None
+
+            tile_height: int
+               max height of a tile with default value of 256
+
+            tile_width: int
+                max width of a tile with default value of 256
+            
+        returns:
+            dict:
+                dictinary with bottom coordinates and width and heigth of box
+    """
     # Find a recommended box for the image (could be replaced with image detection)
-    box = (img.width * 0.2, img.height * 0.2, img.width * 0.8, img.height * 0.8)
+    box = (img.width * 0.2, img.height * 0.2, img.width * 0.2 + tile_width, img.height * 0.2 + tile_height)
     box = [int(i) for i in box]
-    height = box[3] - box[1]
-    width = box[2] - box[0]
+    height = tile_height
+    width = tile_width
 
     # If an aspect_ratio is provided, then fix the aspect
     if aspect_ratio:
@@ -67,7 +104,8 @@ def _recommended_box(img: Image, aspect_ratio: tuple = None) -> dict:
 
 
 def st_cropper(img_file: Image, realtime_update: bool = True, box_color: str = 'blue', aspect_ratio: tuple = None,
-               return_type: str = 'image', box_algorithm=None, key=None, should_resize_image: bool = True):
+               return_type: str = 'image', box_algorithm=None, key=None, should_resize_image: bool = True, 
+               max_height: int = 700, max_width: int = 700, tile_height: int = 256, tile_width: int = 256):
     """Create a new instance of "st_cropper".
 
     Parameters
@@ -100,6 +138,14 @@ def st_cropper(img_file: Image, realtime_update: bool = True, box_color: str = '
         A boolean to select whether the input image should be resized. As default the image
         will be resized to 700x700 pixel for streamlit display. Set to false when using
         custom box_algorithm.
+    max_height: int
+        Max height of the resized image for display
+    max_width: int
+        Max width of the resized image for display
+    tile_height: int
+        Height of the returned tile
+    tile_width: int
+        Width of the returned tile
 
     Returns
     -------
@@ -115,15 +161,18 @@ def st_cropper(img_file: Image, realtime_update: bool = True, box_color: str = '
         raise ValueError(f"{return_type} is not a supported value for return_type, try one of {supported_types}")
 
     # Load the image and resize to be no wider than the streamlit widget size
+
     if should_resize_image:
-        resized_img = _resize_img(img_file)
+        box_resized_w = int(tile_width * max_width / img_file.width) 
+        box_resized_h = int(tile_height * max_height / img_file.height)
+        resized_img = _resize_img(img_file, max_height= max_height, max_width= max_width)
         resized_ratio_w = img_file.width / resized_img.width
         resized_ratio_h = img_file.height / resized_img.height
         orig_file, img_file = img_file, resized_img
 
     # Find a default box
     if not box_algorithm:
-        box = _recommended_box(img_file, aspect_ratio=aspect_ratio)
+        box = _recommended_box(img_file, aspect_ratio=aspect_ratio, tile_height=box_resized_h, tile_width=box_resized_w)
     else:
         box = box_algorithm(img_file, aspect_ratio=aspect_ratio)
 
@@ -164,8 +213,8 @@ def st_cropper(img_file: Image, realtime_update: bool = True, box_color: str = '
     if should_resize_image:
         rect['left'] = max(0, int(rect['left'] * resized_ratio_w))
         rect['top'] = max(0, int(rect['top'] * resized_ratio_h))
-        rect['width'] = min(orig_file.size[0] - rect['left'], int(rect['width'] * resized_ratio_w))
-        rect['height'] = min(orig_file.size[1] - rect['top'], int(rect['height'] * resized_ratio_h))
+        rect['width'] = tile_width
+        rect['height'] = tile_height
 
     # Return the value desired by the return_type
     if return_type.lower() == 'image':
@@ -191,7 +240,7 @@ if not _RELEASE:
     st.header("Cropper Testing")
     img_file = st.sidebar.file_uploader(label='Upload a file', type=['png', 'jpg'])
     realtime_update = st.sidebar.checkbox(label="Update in Real Time", value=True)
-    box_color = st.sidebar.color_picker(label="Box Color", value='#0000FF')
+    box_color = st.sidebar.color_picker(label="Box Color", value='#FF00FF')
 
     aspect_choice = st.sidebar.radio(label="Aspect Ratio", options=["1:1", "16:9", "4:3", "2:3", "Free"])
     aspect_dict = {
