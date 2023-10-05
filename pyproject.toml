@@ -1,5 +1,5 @@
 [project]
-name = "streamlit-cropper"
+name = "streamlit-cropper-ext"
 version = "0.2.1"
 authors = [{name="Turner Anderson", email="andersontur11@gmail.com"}]
 description = "A simple image cropper for Streamlit"
@@ -12,8 +12,8 @@ classifiers = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/turner-anderson/streamlit-cropper"
-"Bug Tracker" = "https://github.com/turner-anderson/streamlit-cropper/issues"
+"Homepage" = "https://github.com/turner-anderson/streamlit-cropper-ext"
+"Bug Tracker" = "https://github.com/turner-anderson/streamlit-cropper-ext/issues"
 
 [build-system]
 requires = ["setuptools>=61.0",

@@ -7,14 +7,14 @@ A streamlit custom component for easy image cropping
 ## Installation
 
 ```shell script
-pip install streamlit-cropper
+pip install streamlit-cropper-ext
 ```
 
 ## Example Usage
 
 ```python
 import streamlit as st
-from streamlit_cropper import st_cropper
+from streamlit_cropper_ext import st_cropper_ext
 from PIL import Image
 st.set_option('deprecation.showfileUploaderEncoding', False)
 
@@ -38,7 +38,7 @@ if img_file:
     if not realtime_update:
         st.write("Double click to save crop")
     # Get a cropped image from the frontend
-    cropped_img = st_cropper(img, realtime_update=realtime_update, box_color=box_color,
+    cropped_img = st_cropper_ext(img, realtime_update=realtime_update, box_color=box_color,
                                 aspect_ratio=aspect_ratio)
     
     # Manipulate cropped image at will

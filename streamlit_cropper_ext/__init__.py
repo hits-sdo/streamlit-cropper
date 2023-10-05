@@ -7,13 +7,13 @@ _RELEASE = True
 
 if not _RELEASE:
     _component_func = components.declare_component(
-        "st_cropper",
+        "st_cropper_ext",
         url="http://localhost:3000",
     )
 else:
     parent_dir = os.path.dirname(os.path.abspath(__file__))
     build_dir = os.path.join(parent_dir, "frontend/build")
-    _component_func = components.declare_component("st_cropper", path=build_dir)
+    _component_func = components.declare_component("st_cropper_ext", path=build_dir)
 
 
 def _resize_img(img: Image, max_height: int = 700, max_width: int = 700) -> Image:
@@ -103,10 +103,10 @@ def _recommended_box(img: Image, aspect_ratio: tuple = None, tile_height: int = 
     return {'left': int(left), 'top': int(top), 'width': int(width), 'height': int(height)}
 
 
-def st_cropper(img_file: Image, realtime_update: bool = True, box_color: str = 'blue', aspect_ratio: tuple = None,
+def st_cropper_ext(img_file: Image, realtime_update: bool = True, box_color: str = 'blue', aspect_ratio: tuple = None,
                return_type: str = 'image', box_algorithm=None, key=None, should_resize_image: bool = True, 
                max_height: int = 700, max_width: int = 700, tile_height: int = 256, tile_width: int = 256):
-    """Create a new instance of "st_cropper".
+    """Create a new instance of "st_cropper_ext".
 
     Parameters
     ----------
@@ -263,7 +263,7 @@ if not _RELEASE:
         img = Image.open(img_file)
 
         if return_type == 'box':
-            rect = st_cropper(
+            rect = st_cropper_ext(
                 img_file=img,
                 realtime_update=True,
                 box_color=box_color,
@@ -280,7 +280,7 @@ if not _RELEASE:
             if not realtime_update:
                 st.write("Double click to save crop")
             # Get a cropped image from the frontend
-            cropped_img = st_cropper(
+            cropped_img = st_cropper_ext(
                 img_file=img,
                 realtime_update=realtime_update,
                 box_color=box_color,

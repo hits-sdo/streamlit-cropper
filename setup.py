@@ -16,14 +16,14 @@ def readme() -> str:
 
 
 setuptools.setup(
-    name="streamlit-cropper",
+    name="streamlit-cropper-ext",
     version="0.2.0",
-    author="Turner Anderson",
-    author_email="andersontur11@gmail.com",
+    author="SEARCH project",
+    author_email="andres.munoz@swri.org",
     description="A simple image cropper for Streamlit",
     long_description=readme(),
     long_description_content_type="text/markdown",
-    url="https://github.com/turner-anderson/streamlit-cropper",
+    url="https://github.com/hits-sdo/streamlit-cropper",
     packages=setuptools.find_packages(),
     include_package_data=True,
     classifiers=[],

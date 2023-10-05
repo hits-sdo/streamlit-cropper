@@ -1,6 +1,6 @@
 import streamlit as st
 import numpy as np
-from streamlit_cropper import st_cropper
+from streamlit_cropper_ext import st_cropper_ext
 from PIL import Image
 
 st.set_option('deprecation.showfileUploaderEncoding', False)
@@ -33,7 +33,7 @@ if img_file:
     if not realtime_update:
         st.write("Double click to save crop")
     if return_type == 'box':
-        rect = st_cropper(
+        rect = st_cropper_ext(
             img,
             realtime_update=realtime_update,
             box_color=box_color,
@@ -48,7 +48,7 @@ if img_file:
         st.image(Image.fromarray(masked_image), caption='masked image')
     else:
         # Get a cropped image from the frontend
-        cropped_img = st_cropper(
+        cropped_img = st_cropper_ext(
             img,
             realtime_update=realtime_update,
             box_color=box_color,
